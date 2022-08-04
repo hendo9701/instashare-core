@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  mongodb:
+    image: mongo:5.0.10
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - "27017:27017"
+    restart: unless-stopped
+  broker:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
