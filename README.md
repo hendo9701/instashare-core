@@ -1,22 +1,31 @@
-# Getting Started
+# instashare-core
 
-### Reference Documentation
+![example workflow](https://github.com/hendo9701/instashare-core/actions/workflows/main.yml/badge.svg)
+![quality-score](https://api.codiga.io/project/34301/score/svg)
+![code-grade](https://api.codiga.io/project/34301/status/svg)
 
-For further reference, please consider the following sections:
+## Description
 
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/2.7.2/maven-plugin/reference/html/)
-* [Create an OCI image](https://docs.spring.io/spring-boot/docs/2.7.2/maven-plugin/reference/html/#build-image)
-* [Embedded MongoDB Database](https://docs.spring.io/spring-boot/docs/2.7.2/reference/htmlsingle/#data.nosql.mongodb.embedded)
-* [Spring Data Reactive MongoDB](https://docs.spring.io/spring-boot/docs/2.7.2/reference/htmlsingle/#data.nosql.mongodb)
-* [Spring Reactive Web](https://docs.spring.io/spring-boot/docs/2.7.2/reference/htmlsingle/#web.reactive)
-* [Spring for RabbitMQ](https://docs.spring.io/spring-boot/docs/2.7.2/reference/htmlsingle/#messaging.amqp)
+This is an API for performing the following operations on files:
 
-### Guides
+1. Uploading
+1. Downloading
+1. Renaming
+1. Retrieving
 
-The following guides illustrate how to use some features concretely:
+The application uses AWS S3 for file storage and MongoDB for holding domain data.
 
-* [Accessing Data with MongoDB](https://spring.io/guides/gs/accessing-data-mongodb/)
-* [Building a Reactive RESTful Web Service](https://spring.io/guides/gs/reactive-rest-service/)
-* [Messaging with RabbitMQ](https://spring.io/guides/gs/messaging-rabbitmq/)
+## OpenAPI
+
+API documentation is available at ```http://{app-host}:{app-port}/webjars/swagger-ui/index.html#/```
+
+## Bootstrapping the API
+
+1. Run ``docker-compose up`` from the project's root folder
+1. Run ``mvn spring-boot:run``
+
+## Running the tests
+
+Run ``mvn clean test``
+
 
