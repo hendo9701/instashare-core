@@ -20,4 +20,6 @@ public interface FileService {
   Mono<File> rename(File file, String newName);
 
   Mono<File> uploadPart(FilePart filePart, String owner);
+
+  Mono<Long> countByOwner(String name);
 }

@@ -41,6 +41,11 @@ public class FileController {
     return Mono.from(fileService.getAll(userEmail).buffer(size).skip(skip));
   }
 
+  @GetMapping("/count")
+  public Mono<Long> count(Principal principal) {
+    return fileService.countByOwner(principal.getName());
+  }
+
   @GetMapping("/{fileKey}")
   public Mono<ResponseEntity<Flux<ByteBuffer>>> download(
       Principal principal, @PathVariable String fileKey) {
