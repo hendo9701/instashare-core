@@ -1,8 +1,11 @@
 # instashare-core
 
+
 ![example workflow](https://github.com/hendo9701/instashare-core/actions/workflows/main.yml/badge.svg)
+[![codecov](https://codecov.io/gh/hendo9701/instashare-core/branch/master/graph/badge.svg?token=UJWMOTORCM)](https://codecov.io/gh/hendo9701/instashare-core)
 ![quality-score](https://api.codiga.io/project/34301/score/svg)
 ![code-grade](https://api.codiga.io/project/34301/status/svg)
+
 
 ## Description
 
