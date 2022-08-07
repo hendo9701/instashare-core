@@ -48,6 +48,7 @@ class FileControllerIntegrationTest {
   @Value("classpath:sample.txt")
   @Autowired
   Resource sampleFile;
+
   @LocalServerPort private int serverPort;
   private User validUser;
 
@@ -194,6 +195,21 @@ class FileControllerIntegrationTest {
     val uploadResult = response.block();
     assertThat(
         "Upload status must be COMPLETED", uploadResult.uploadStatus, is(UploadStatus.COMPLETED));
+  }
+
+  @Test
+  @DisplayName(
+      "When counting the number of files of a user owning just one file, then one must be retrieved")
+  void countShouldBeEqualToOne() {
+    val response =
+        webClient
+            .get()
+            .uri("http://localhost:%d/v1/files/count".formatted(serverPort))
+            .header("Authorization", "Bearer " + validAccessToken)
+            .retrieve()
+            .bodyToMono(Long.class)
+            .timeout(Duration.ofSeconds(2));
+    assertThat("Count should be one", response.block(), Matchers.is(1L));
   }
 
   enum UploadStatus {
