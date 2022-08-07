@@ -1,9 +1,9 @@
 package com.instashare.instasharecore.files.dtos;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
 @RequiredArgsConstructor
 public class UploadResultError extends UploadResultContent {
   private final String message;

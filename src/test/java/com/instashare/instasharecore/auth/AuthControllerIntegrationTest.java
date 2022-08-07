@@ -66,7 +66,7 @@ class AuthControllerIntegrationTest {
             .uri(format("http://localhost:%d/v1/signin", serverPort))
             .bodyValue(body)
             .exchangeToMono(response -> Mono.just(response.statusCode()))
-            .timeout(Duration.ofSeconds(2));
+            .timeout(Duration.ofSeconds(5));
     assertThat("Should be 401", responseStatusCode.block(), is(HttpStatus.UNAUTHORIZED));
   }
 

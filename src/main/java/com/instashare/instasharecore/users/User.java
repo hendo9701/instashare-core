@@ -3,7 +3,10 @@ package com.instashare.instasharecore.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.instashare.instasharecore.auth.Role;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -17,7 +20,6 @@ import java.util.stream.Collectors;
 
 @ToString
 @NoArgsConstructor
-@AllArgsConstructor
 @Document(value = "users")
 public class User implements UserDetails {
 

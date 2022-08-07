@@ -1,12 +1,9 @@
 package com.instashare.instasharecore.auth;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class AuthResponse {
-  private String accessToken;
+  @Getter private String accessToken;
 }

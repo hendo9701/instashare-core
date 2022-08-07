@@ -25,8 +25,10 @@ import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,8 +44,12 @@ class FileControllerIntegrationTest {
   @Container static MyMongoDbContainer mongo = MyMongoDbContainer.getInstance();
 
   @Container static MyRabbitContainer rabbit = MyRabbitContainer.getInstance();
+
   private final WebClient webClient = WebClient.builder().build();
+
   @Autowired UserService userService;
+
+  @Autowired FileRepository fileRepository;
 
   @Value("classpath:sample.txt")
   @Autowired
@@ -55,6 +61,8 @@ class FileControllerIntegrationTest {
   private String validAccessToken;
 
   private String existingFileKey;
+
+  private String existingFileName;
 
   @DynamicPropertySource
   static void configure(DynamicPropertyRegistry registry) {
@@ -91,6 +99,7 @@ class FileControllerIntegrationTest {
             .bodyToMono(UploadResultCompleted.class)
             .timeout(Duration.ofSeconds(10));
     existingFileKey = result.block().uploadResultContent.keys.get(0);
+    existingFileName = filename;
   }
 
   @Test
@@ -119,6 +128,31 @@ class FileControllerIntegrationTest {
             .exchangeToMono(response -> Mono.just(response.statusCode()))
             .timeout(Duration.ofSeconds(2));
     assertThat("Response status code must be 403", result.block(), is(HttpStatus.FORBIDDEN));
+  }
+
+  @Test
+  @DisplayName("User can download COMPRESSED files")
+  void downloadCompressedShouldWork() throws IOException {
+    // Update file status manually
+    val file = fileRepository.findByIdAndOwner(existingFileKey, validUser.email()).block();
+    file.setFileStatus(FileStatus.COMPRESSED);
+    fileRepository.save(file).block();
+
+    // Download
+    val result =
+        webClient
+            .get()
+            .uri(format("http://localhost:%d/v1/files/%s", serverPort, existingFileKey))
+            .header("Authorization", "Bearer " + validAccessToken)
+            .retrieve()
+            .bodyToMono(byte[].class)
+            .timeout(Duration.ofSeconds(10));
+    val tempFile = Files.createTempFile("download-", ".tmp");
+    Files.write(tempFile, Objects.requireNonNull(result.share().block()));
+    assertThat("File size must be greater than 0", Files.size(tempFile), Matchers.greaterThan(0L));
+    // Clean-up
+    val deleteResult = tempFile.toFile().delete();
+    assertThat("File should be deleted after download", deleteResult, Matchers.is(true));
   }
 
   @Test
@@ -174,6 +208,42 @@ class FileControllerIntegrationTest {
     val uploadResult = response.block();
     assertThat(
         "Upload status must be COMPLETED", uploadResult.uploadStatus, is(UploadStatus.COMPLETED));
+  }
+
+  @Test
+  @DisplayName("User cannot upload file with existing filename")
+  void cannotUploadFileExistingFilename() throws IOException {
+    val response =
+        webClient
+            .post()
+            .uri(format("http://localhost:%d/v1/files?filename=%s", serverPort, existingFileName))
+            .header("Authorization", "Bearer " + validAccessToken)
+            .contentType(MediaType.TEXT_PLAIN)
+            .contentLength(sampleFile.contentLength())
+            .body(BodyInserters.fromResource(sampleFile))
+            .exchangeToMono(clientResponse -> Mono.just(clientResponse.statusCode()))
+            .timeout(Duration.ofSeconds(10));
+    val statusCode = response.block();
+    assertThat("Cannot upload file with existing filename", statusCode, is(HttpStatus.BAD_REQUEST));
+  }
+
+  @Test
+  @DisplayName(
+      "An error should be thrown when attempting to upload a file (simple) without content-length header")
+  void uploadWithoutContentLengthSimple() {
+    val response =
+        webClient
+            .post()
+            .uri(
+                format(
+                    "http://localhost:%d/v1/files?filename=%s",
+                    serverPort, sampleFile.getFilename()))
+            .header("Authorization", "Bearer " + validAccessToken)
+            .contentType(MediaType.TEXT_PLAIN)
+            .exchangeToMono(clientResponse -> Mono.just(clientResponse.statusCode()))
+            .timeout(Duration.ofSeconds(10));
+    val statusCode = response.block();
+    assertThat("Bad request must be returned", statusCode, is(HttpStatus.BAD_REQUEST));
   }
 
   @Test

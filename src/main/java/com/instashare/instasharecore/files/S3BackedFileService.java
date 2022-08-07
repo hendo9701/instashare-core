@@ -6,7 +6,6 @@ import com.instashare.instasharecore.files.exceptions.DownloadFailedException;
 import com.instashare.instasharecore.files.exceptions.UploadFailedException;
 import com.instashare.instasharecore.files.util.DownloadResult;
 import com.instashare.instasharecore.files.util.SimpleUploadInfo;
-import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -202,7 +201,7 @@ public class S3BackedFileService implements FileService {
         s3Client.uploadPart(
             UploadPartRequest.builder()
                 .bucket(uploadState.bucket)
-                .key(uploadState.getFileKey())
+                .key(uploadState.fileKey)
                 .partNumber(partNumber)
                 .uploadId(uploadState.uploadId)
                 .contentLength((long) buffer.capacity())
@@ -226,7 +225,7 @@ public class S3BackedFileService implements FileService {
     log.debug(
         "Upload completed: bucket={}, fileKey={}, completedParts.size={}",
         state.bucket,
-        state.getFileKey(),
+        state.fileKey,
         state.completedParts.size());
 
     val multipartUpload =
@@ -238,7 +237,7 @@ public class S3BackedFileService implements FileService {
                 .bucket(state.bucket)
                 .uploadId(state.uploadId)
                 .multipartUpload(multipartUpload)
-                .key(state.getFileKey())
+                .key(state.fileKey)
                 .build()));
   }
 
@@ -282,7 +281,6 @@ public class S3BackedFileService implements FileService {
     return fileRepository.findByIdAndOwner(fileKey, owner);
   }
 
-  @Data
   @RequiredArgsConstructor
   private static class UploadState {
     final String bucket;

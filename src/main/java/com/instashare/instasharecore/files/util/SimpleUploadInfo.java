@@ -1,17 +1,15 @@
 package com.instashare.instasharecore.files.util;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import org.springframework.http.MediaType;
 import reactor.core.publisher.Flux;
 
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-@Builder
-@Data
 @AllArgsConstructor
+@Getter
 public class SimpleUploadInfo {
   String fileKey;
   String fileName;

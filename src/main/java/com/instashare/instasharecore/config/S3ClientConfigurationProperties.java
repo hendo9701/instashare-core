@@ -1,13 +1,15 @@
 package com.instashare.instasharecore.config;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import software.amazon.awssdk.regions.Region;
 
 import java.net.URI;
 
 @ConfigurationProperties(prefix = "aws.s3")
-@Data
+@Getter
+@Setter
 public class S3ClientConfigurationProperties {
 
   private Region region = Region.US_EAST_1;
