@@ -1,12 +1,9 @@
 package com.instashare.instasharecore.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.instashare.instasharecore.auth.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ToString
 @NoArgsConstructor
 @Document(value = "users")
 public class User implements UserDetails {
@@ -28,13 +24,12 @@ public class User implements UserDetails {
   @Id private String id;
 
   @Getter
-  @Setter
   @Indexed(unique = true)
   private String email;
 
   private String password;
-  @Getter @Setter private Boolean enabled;
-  @Getter @Setter private List<Role> roles;
+  @Getter private Boolean enabled;
+  @Getter private List<Role> roles;
 
   public User(String email, String password, Role role) {
     this.email = email;
@@ -46,11 +41,6 @@ public class User implements UserDetails {
   @Override
   public String getPassword() {
     return password;
-  }
-
-  @JsonProperty
-  public void setPassword(String password) {
-    this.password = password;
   }
 
   @Override
