@@ -11,6 +11,9 @@ public interface FileRepository extends ReactiveMongoRepository<File, String> {
 
   Mono<Boolean> existsByFileName(String fileName);
 
+  @Query(value = "{ 'owner': ?0, 'fileName': ?1 }", exists = true)
+  Mono<Boolean> existsByOwnerAndFileName(String owner, String fileName);
+
   Flux<File> findAllByOwner(String owner);
 
   Mono<File> findByIdAndOwner(String fileKey, String owner);

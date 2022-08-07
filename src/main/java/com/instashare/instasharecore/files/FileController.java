@@ -105,7 +105,7 @@ public class FileController {
     }
 
     return fileService
-        .existsByFileName(filename)
+        .existsByOwnerAndFileName(principal.getName(), filename)
         .flatMap(
             exists -> {
               if (exists) {
@@ -140,11 +140,21 @@ public class FileController {
       Principal principal, @RequestBody Flux<Part> parts) {
     return parts
         .ofType(FilePart.class)
+        .filterWhen(
+            filePart ->
+                fileService
+                    .existsByOwnerAndFileName(principal.getName(), filePart.filename())
+                    .map(it -> !it))
         .flatMap(part -> fileService.uploadPart(part, principal.getName()))
         .collect(Collectors.toList())
         .map(
             files -> {
               val fileKeys = files.stream().map(File::getId).collect(Collectors.toList());
+              if (fileKeys.isEmpty())
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(
+                        new UploadResult(
+                            UploadStatus.FAILED, new UploadResultError("File name in use")));
               return ResponseEntity.status(HttpStatus.CREATED)
                   .body(
                       new UploadResult(

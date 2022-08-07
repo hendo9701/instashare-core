@@ -11,6 +11,8 @@ public interface FileService {
 
   Mono<Boolean> existsByFileName(String fileName);
 
+  Mono<Boolean> existsByOwnerAndFileName(String owner, String filename);
+
   Flux<File> getAll(String owner);
 
   Mono<DownloadResult> download(File file);

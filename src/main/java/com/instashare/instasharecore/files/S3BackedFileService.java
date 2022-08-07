@@ -247,6 +247,17 @@ public class S3BackedFileService implements FileService {
   }
 
   @Override
+  public Mono<Boolean> existsByOwnerAndFileName(String owner, String filename) {
+    return fileRepository
+        .existsByOwnerAndFileName(owner, filename)
+        .flatMap(
+            exists -> {
+              if (exists) return Mono.just(true);
+              else return fileRepository.existsByOwnerAndFileName(owner, filename + ".gz");
+            });
+  }
+
+  @Override
   public Flux<File> getAll(@NonNull String owner) {
     return fileRepository.findAllByOwner(owner);
   }
