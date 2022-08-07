@@ -187,12 +187,12 @@ public class S3BackedFileService implements FileService {
             });
   }
 
-    @Override
-    public Mono<Long> countByOwner(String name) {
-        return fileRepository.countByOwner(name);
-    }
+  @Override
+  public Mono<Long> countByOwner(String name) {
+    return fileRepository.countByOwner(name);
+  }
 
-    private boolean transmissionFailed(SdkHttpResponse httpResponse) {
+  private boolean transmissionFailed(SdkHttpResponse httpResponse) {
     return httpResponse == null || !httpResponse.isSuccessful();
   }
 
